@@ -30,11 +30,20 @@ st.subheader("📊 Price Chart")
 x = list(prices.keys())
 height = list(prices.values())
 
+# Ensure all prices are numeric
+df["Price (USD)"] = pd.to_numeric(df["Price (USD)"], errors='coerce')
+
+# Drop any rows with invalid (NaN) prices
+df = df.dropna()
+
+# Plot using dynamic colors matching data length
 fig, ax = plt.subplots()
-ax.bar(x, height, color=['red', 'yellow', 'green', 'pink'])
+colors = ['red', 'yellow', 'green', 'pink'][:len(df)]  # Adjust to match number of coins
+ax.bar(df["Coin"], df["Price (USD)"], color=colors)
 ax.set_ylabel("Price in USD")
-ax.set_title("Current Prices of Cryptocurrencies")
+ax.set_title("Current Prices of Selected Cryptos")
 st.pyplot(fig)
+
 
 # Sidebar: refresh settings
 st.sidebar.title("⚙️ Settings")
@@ -46,3 +55,4 @@ import time
 if auto_refresh:
     time.sleep(refresh_rate)
     st.experimental_rerun()
+
